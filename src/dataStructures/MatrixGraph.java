@@ -1,11 +1,17 @@
 package dataStructures;
+
+import java.util.PriorityQueue;
+
 public class MatrixGraph implements IGraph {
+	private String[] ch = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
     private boolean isDirected;
     private int vertexAmount;
     private int edgeAmount;
     private int VERTEX_LIMIT = 100;
-    private int ady[][];
-
+    private int adj[][];
+    private boolean[] color;
+    private PriorityQueue<PrimEdge> pq;
+    
     public boolean isDirected() {
 		return this.isDirected;
 	}
@@ -30,15 +36,17 @@ public class MatrixGraph implements IGraph {
 		this.edgeAmount = edgeAmount;
 	}
 	
-	public int[][] getAdy() {
-		return ady;
+	public int[][] getAdj() {
+		return adj;
 	}
 
     public MatrixGraph(boolean isDirected) {
         this.isDirected = isDirected;
         this.vertexAmount = 0;
         this.edgeAmount = 0;
-        this.ady = new int[VERTEX_LIMIT][VERTEX_LIMIT];
+        this.adj = new int[VERTEX_LIMIT][VERTEX_LIMIT];
+        this.color = new boolean[VERTEX_LIMIT];
+        this.pq = new PriorityQueue<>();
     }  
     
     @Override
@@ -49,20 +57,20 @@ public class MatrixGraph implements IGraph {
     @Override
     public void removeVertex(int vertex) {
         for (int i=0; i<vertexAmount; i++) {
-            ady[i][vertex] = 0;
+        	adj[i][vertex] = 0;
         }
 
         for (int i=0; i<vertexAmount-1-vertex; i++) {
             for (int j=0; j<vertexAmount; j++) {
                 //System.out.println(i + "--> " + j);
-                ady[j][vertex+i] = ady[j][vertex+i+1];
-                ady[vertex+i][j] = ady[vertex+i+1][j];
+            	adj[j][vertex+i] = adj[j][vertex+i+1];
+            	adj[vertex+i][j] = adj[vertex+i+1][j];
             }
         }
 
         for (int i=0; i<vertexAmount-1; i++) {
-            ady[vertexAmount-1][i] = 0;
-            ady[i][vertexAmount-1] = 0;
+        	adj[vertexAmount-1][i] = 0;
+        	adj[i][vertexAmount-1] = 0;
         }
 
         vertexAmount--;
@@ -70,15 +78,15 @@ public class MatrixGraph implements IGraph {
 
     @Override
     public void addEdge(int from, int to, int weight) {
-        ady[from][to] = weight;
-        if (isDirected==false) ady[to][from] = weight;
+    	adj[from][to] = weight;
+        if (isDirected==false) adj[to][from] = weight;
         edgeAmount++;
     }
 
     @Override
     public void removeEdge(int from, int to) {
-        ady[from][to] = 0;
-        if (isDirected==false) ady[to][from] = 0;
+    	adj[from][to] = 0;
+        if (isDirected==false) adj[to][from] = 0;
         edgeAmount--;
     }
 
@@ -87,10 +95,32 @@ public class MatrixGraph implements IGraph {
         String s= "";
         for (int i = 0; i < vertexAmount; i++) {
             for (int j = 0; j < vertexAmount; j++) {
-                s+= ady[i][j]+" ";
+                s+= adj[i][j]+" ";
             }
             s+="\n";
         }
       return s;
+    }
+    
+    public void prim() {
+    	visit(0);
+
+    	while(!pq.isEmpty()){
+    		PrimEdge n = pq.poll();
+        	int adjacent = n.getAdjacent();
+	    	if(!color[adjacent]){
+		    	visit(adjacent);
+	    	}
+    	}
+    }
+    
+    private void visit(int currentVertex) {
+    	System.out.println("visited " + ch[currentVertex]);
+    	color[currentVertex] = true;
+    	for(int i = 0; i < vertexAmount; i++){
+    		if (adj[currentVertex][i] != 0 && !color[i]) {
+    			pq.add(new PrimEdge(i, adj[currentVertex][i]));
+    		}
+    	}
     }
 }
