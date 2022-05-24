@@ -102,19 +102,20 @@ public class MatrixGraph implements IGraph {
       return s;
     }
     
+	@Override
     public void prim() {
-    	visit(0);
+		primVisit(0);
 
     	while(!pq.isEmpty()){
-    		PrimEdge n = pq.poll();
-        	int adjacent = n.getAdjacent();
+        	int adjacent = pq.poll().getAdjacent();
 	    	if(!color[adjacent]){
-		    	visit(adjacent);
+	    		primVisit(adjacent);
 	    	}
     	}
     }
     
-    private void visit(int currentVertex) {
+	@Override
+    public void primVisit(int currentVertex) {
     	System.out.println("visited " + ch[currentVertex]);
     	color[currentVertex] = true;
     	for(int i = 0; i < vertexAmount; i++){

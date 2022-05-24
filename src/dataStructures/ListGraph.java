@@ -2,22 +2,24 @@ package dataStructures;
 import java.util.*;
 
 public class ListGraph implements IGraph {
+	private String[] ch = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
     private boolean isDirected;
     private int vertexAmount;
     private int edgeAmount;
-    private HashMap<Integer, HashMap<Integer, Integer>> ady;
-
-    //private ArrayList[] ady = new ArrayList[VERTEX_LIMIT];
+    private HashMap<Integer, HashMap<Integer, Integer>> adj;
+    private boolean[] color;
+    private PriorityQueue<PrimEdge> pq;
 
     public ListGraph(boolean isDirected) {
         this.isDirected = isDirected;
         this.vertexAmount = 0;
         this.edgeAmount = 0;
-        this.ady = new HashMap<>();
+        this.adj = new HashMap<>();
+        this.pq = new PriorityQueue<>();
     }
     
     public HashMap<Integer, HashMap<Integer, Integer>> getAdy(){
-    	return ady;
+    	return adj;
     }
     @Override
     public boolean isDirected() {
@@ -48,14 +50,14 @@ public class ListGraph implements IGraph {
 
     @Override
     public void addVertex() {
-        ady.put(vertexAmount, new HashMap<>());
+    	adj.put(vertexAmount, new HashMap<>());
         vertexAmount++;
     }
 
     @Override
     public void removeVertex(int vertex) {
-        ady.remove(vertex);
-        for (HashMap<Integer, Integer> h : ady.values()) {
+    	adj.remove(vertex);
+        for (HashMap<Integer, Integer> h : adj.values()) {
             if (h.containsKey(vertex)) h.remove(vertex);
         }
         vertexAmount--;
@@ -63,28 +65,53 @@ public class ListGraph implements IGraph {
 
     @Override
     public void addEdge(int from, int to, int weight) {
-        ady.get(from).put(to, weight);
-        if (isDirected==false) ady.get(to).put(from, weight);
+    	adj.get(from).put(to, weight);
+        if (isDirected==false) adj.get(to).put(from, weight);
         edgeAmount++;
     }
 
     @Override
     public void removeEdge(int from, int to) {
-        ady.get(from).remove(to);
-        if (isDirected==false) ady.get(to).remove(from);
+    	adj.get(from).remove(to);
+        if (isDirected==false) adj.get(to).remove(from);
         edgeAmount--;
     }
 
     @Override
     public String printAdy() {
     	String s="";
-        for (Integer i : ady.keySet()) {
+        for (Integer i : adj.keySet()) {
             s+=i + " --> ";
-            for (Integer j : ady.get(i).keySet()) {
-                s+=j + "-" + ady.get(i).get(j) + "; ";
+            for (Integer j : adj.get(i).keySet()) {
+                s+=j + "-" + adj.get(i).get(j) + "; ";
             }
             s+="\n";
         }
         return s;
+    }
+
+	@Override
+    public void prim() {
+        this.color = new boolean[vertexAmount];
+		primVisit(0);
+
+    	while(!pq.isEmpty()){
+        	int adjacent = pq.poll().getAdjacent();
+	    	if(!color[adjacent]){
+	    		primVisit(adjacent);
+	    	}
+    	}
+    }
+    
+	@Override
+    public void primVisit(int currentVertex) {
+    	System.out.println("visited " + ch[currentVertex]);
+    	color[currentVertex] = true;
+    	
+    	for (Integer i : adj.get(currentVertex).keySet()) {
+    		if (!color[i]) {
+    			pq.add(new PrimEdge(i, adj.get(currentVertex).get(i)));
+    		}
+    	}
     }
 }

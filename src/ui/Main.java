@@ -9,7 +9,7 @@ public class Main {
 	}
 	
 	public Main() {
-		MatrixGraph graph = new MatrixGraph(true);
+		ListGraph graph = new ListGraph(true);
 		graph.addVertex();
 		graph.addVertex();
 		graph.addVertex();

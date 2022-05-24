@@ -9,4 +9,6 @@ public interface IGraph {
     public int getVertexAmount();
     public int getEdgeAmount();
     public String printAdy();
+    public void prim();
+    public void primVisit(int currentVertex);
 }
