@@ -45,8 +45,6 @@ public class MatrixGraph implements IGraph {
         this.vertexAmount = 0;
         this.edgeAmount = 0;
         this.adj = new int[VERTEX_LIMIT][VERTEX_LIMIT];
-        this.color = new boolean[VERTEX_LIMIT];
-        this.pq = new PriorityQueue<>();
     }  
     
     @Override
@@ -91,7 +89,7 @@ public class MatrixGraph implements IGraph {
     }
 
     @Override
-    public String printAdy(){
+    public String printAdj(){
         String s= "";
         for (int i = 0; i < vertexAmount; i++) {
             for (int j = 0; j < vertexAmount; j++) {
@@ -104,23 +102,37 @@ public class MatrixGraph implements IGraph {
     
 	@Override
     public void prim() {
+        this.color = new boolean[VERTEX_LIMIT];
+        this.pq = new PriorityQueue<>();
 		primVisit(0);
 
     	while(!pq.isEmpty()){
-        	int adjacent = pq.poll().getAdjacent();
-	    	if(!color[adjacent]){
+        	PrimEdge adjacent = pq.poll();
+	    	if(!color[adjacent.getAdjacent()]){
 	    		primVisit(adjacent);
 	    	}
     	}
     }
     
 	@Override
-    public void primVisit(int currentVertex) {
-    	System.out.println("visited " + ch[currentVertex]);
+    public void primVisit(PrimEdge edge) {
+    	int currentVertex = edge.getAdjacent();
+    	System.out.println("Se agrega " + ch[currentVertex] + "; padre -> " + ch[edge.getParent()]);
     	color[currentVertex] = true;
     	for(int i = 0; i < vertexAmount; i++){
     		if (adj[currentVertex][i] != 0 && !color[i]) {
-    			pq.add(new PrimEdge(i, adj[currentVertex][i]));
+    			pq.add(new PrimEdge(i, adj[currentVertex][i], currentVertex));
+    		}
+    	}
+    }
+	
+	@Override
+    public void primVisit(int root) {
+    	System.out.println("Se agrega " + ch[root] + "; -->RAIZ");
+    	color[root] = true;
+    	for(int i = 0; i < vertexAmount; i++){
+    		if (adj[root][i] != 0 && !color[i]) {
+    			pq.add(new PrimEdge(i, adj[root][i], root));
     		}
     	}
     }

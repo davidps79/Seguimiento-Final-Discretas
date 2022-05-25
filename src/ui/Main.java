@@ -9,7 +9,23 @@ public class Main {
 	}
 	
 	public Main() {
-		ListGraph graph = new ListGraph(true);
+		start();
+	}
+	
+	public void start() {
+		/*El metodo retorna la estructura del árbol.
+		Con cada nodo agregado y su padre se puede construir
+		un árbol n-ario
+		
+		Los métodos funcionan para grafo por matriz y por lista
+		de adyacencia.
+		
+		Se puede comentar una de las inicializaciones para usar una
+		o otra implementación, una a la vez porque se llaman igual.
+		*/
+		
+		//ListGraph graph = new ListGraph(true);
+		MatrixGraph graph = new MatrixGraph(true);
 		graph.addVertex();
 		graph.addVertex();
 		graph.addVertex();
@@ -34,6 +50,7 @@ public class Main {
 		graph.addEdge(6, 8, 6);
 		graph.addEdge(6, 7, 1);
 		
+		System.out.println("MST producido por prim:");
 		graph.prim();
 	}
 }

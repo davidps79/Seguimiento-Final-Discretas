@@ -11,16 +11,16 @@ public class ListGraph implements IGraph {
     private PriorityQueue<PrimEdge> pq;
 
     public ListGraph(boolean isDirected) {
+        this.adj = new HashMap<>();
         this.isDirected = isDirected;
         this.vertexAmount = 0;
         this.edgeAmount = 0;
-        this.adj = new HashMap<>();
-        this.pq = new PriorityQueue<>();
     }
     
-    public HashMap<Integer, HashMap<Integer, Integer>> getAdy(){
+    public HashMap<Integer, HashMap<Integer, Integer>> getAdj(){
     	return adj;
     }
+    
     @Override
     public boolean isDirected() {
 		return this.isDirected;
@@ -78,7 +78,7 @@ public class ListGraph implements IGraph {
     }
 
     @Override
-    public String printAdy() {
+    public String printAdj() {
     	String s="";
         for (Integer i : adj.keySet()) {
             s+=i + " --> ";
@@ -92,25 +92,39 @@ public class ListGraph implements IGraph {
 
 	@Override
     public void prim() {
+        this.pq = new PriorityQueue<>();
         this.color = new boolean[vertexAmount];
 		primVisit(0);
 
     	while(!pq.isEmpty()){
-        	int adjacent = pq.poll().getAdjacent();
-	    	if(!color[adjacent]){
+        	PrimEdge adjacent = pq.poll();
+	    	if(!color[adjacent.getAdjacent()]){
 	    		primVisit(adjacent);
 	    	}
     	}
     }
     
 	@Override
-    public void primVisit(int currentVertex) {
-    	System.out.println("visited " + ch[currentVertex]);
+    public void primVisit(int root) {
+    	System.out.println("Se agrega " + ch[root] + "; -->RAIZ");
+    	color[root] = true;
+    	
+    	for (Integer i : adj.get(root).keySet()) {
+    		if (!color[i]) {
+    			pq.add(new PrimEdge(i, adj.get(root).get(i), root));
+    		}
+    	}
+    }
+	
+	@Override
+    public void primVisit(PrimEdge edge) {
+		int currentVertex = edge.getAdjacent();
+		System.out.println("Se agrega " + ch[currentVertex] + "; padre -> " + ch[edge.getParent()]);
     	color[currentVertex] = true;
     	
     	for (Integer i : adj.get(currentVertex).keySet()) {
     		if (!color[i]) {
-    			pq.add(new PrimEdge(i, adj.get(currentVertex).get(i)));
+    			pq.add(new PrimEdge(i, adj.get(currentVertex).get(i), currentVertex));
     		}
     	}
     }

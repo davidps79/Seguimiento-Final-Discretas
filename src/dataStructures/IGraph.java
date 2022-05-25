@@ -8,7 +8,8 @@ public interface IGraph {
     public boolean isDirected();
     public int getVertexAmount();
     public int getEdgeAmount();
-    public String printAdy();
+    public String printAdj();
     public void prim();
+    public void primVisit(PrimEdge edge);
     public void primVisit(int currentVertex);
 }

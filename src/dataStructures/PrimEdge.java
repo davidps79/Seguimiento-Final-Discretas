@@ -1,12 +1,14 @@
 package dataStructures;
 
 public class PrimEdge implements Comparable<PrimEdge> {
-	public int adjacent;
-    public int weight;
+	private int parent;
+	private int adjacent;
+	private int weight;
  
-	public PrimEdge(int adjacent, int weight) {
+	public PrimEdge(int adjacent, int weight, int parent) {
 	    this.adjacent = adjacent;
 	    this.weight = weight;
+	    this.parent = parent;
     }
  
 	@Override
@@ -32,6 +34,14 @@ public class PrimEdge implements Comparable<PrimEdge> {
 
 	public void setWeight(int weight) {
 		this.weight = weight;
+	}
+	
+	public int getParent() {
+		return parent;
+	}
+
+	public void setParent(int parent) {
+		this.parent = parent;
 	}
 	
 	@Override
